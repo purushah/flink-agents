@@ -104,6 +104,10 @@ The same persisted action state is also used by fine-grained durable execution.
 
 See [Action State Store Configuration]({{< ref "docs/operations/configuration#action-state-store" >}}) for configuration options.
 
+{{< hint warning >}}
+**Upgrading**: Action state keys are derived from the action name since Flink Agents 0.4. Action state recorded by earlier versions is not consulted after the upgrade. Upgrade from a stop-with-savepoint taken after the job is idle with no pending actions, and do not restore the upgraded job from an older checkpoint; otherwise actions completed since that checkpoint are executed once more.
+{{< /hint >}}
+
 {{< hint info >}}
 **Note**: Exactly-once action consistency is guaranteed only if, after recovering from the same checkpoint, inputs for each key arrive in the same order as before recovery. If this ordering requirement is not met, the system falls back to exactly-once output consistency.
 {{< /hint >}}
