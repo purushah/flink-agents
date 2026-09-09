@@ -74,7 +74,7 @@ final class LlmJudgeRoutingExecutor implements RoutingExecutor {
     static final String CONTEXT_TRUNCATED_KEY = "judge_context_truncated";
 
     @Override
-    public boolean issuesDurableCalls() {
+    public boolean usesDurableExecutionInternally() {
         return true;
     }
 

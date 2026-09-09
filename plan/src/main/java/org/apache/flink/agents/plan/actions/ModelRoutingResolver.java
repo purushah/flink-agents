@@ -43,9 +43,9 @@ import java.util.UUID;
  * judge — is persisted by this class, so replay determinism is a property of the substrate rather
  * than a per-executor discipline. Executors without durable sub-calls run <i>inside</i> the
  * persistence callable (never re-invoked on replay); an executor that issues its own flat durable
- * calls ({@link RoutingExecutor#issuesDurableCalls()}) runs <i>before</i> it, because the durable
- * substrate replays a flat, order-matched call sequence and cannot nest (see the sequencing
- * contract on {@link RoutingExecutor}).
+ * calls ({@link RoutingExecutor#usesDurableExecutionInternally()}) runs <i>before</i> it, because
+ * the durable substrate replays a flat, order-matched call sequence and cannot nest (see the
+ * sequencing contract on {@link RoutingExecutor}).
  */
 final class ModelRoutingResolver {
 
@@ -95,7 +95,7 @@ final class ModelRoutingResolver {
         executor.prepare(strategy, ctx);
 
         RoutingDecision decision =
-                executor.issuesDurableCalls()
+                executor.usesDurableExecutionInternally()
                         ? persistPrecomputed(executor, strategy, routingContext, model, ctx)
                         : executeInsideBoundary(executor, strategy, routingContext, model, ctx);
         recordDecisionLatency(ctx, decision);

@@ -34,18 +34,20 @@ import org.apache.flink.agents.api.context.RunnerContext;
  * call sequence</b> per action — durable calls cannot nest (a nested call would persist before its
  * enclosing call, but replay consults the enclosing call first, clearing the recovery state). An
  * executor that needs durable sub-calls of its own (the judge's chat call) therefore declares
- * {@link #issuesDurableCalls()} and is invoked <i>before</i> the resolver's persistence call, so
- * its records land as flat siblings ahead of the decision record; on replay the executor re-runs
- * cheaply against its replayed sub-call records, and the replayed decision wins. Executors without
- * durable sub-calls run <i>inside</i> the persistence boundary and are never re-invoked on replay.
+ * {@link #usesDurableExecutionInternally()} and is invoked <i>before</i> the resolver's persistence
+ * call, so its records land as flat siblings ahead of the decision record; on replay the executor
+ * re-runs cheaply against its replayed sub-call records, and the replayed decision wins. Executors
+ * without durable sub-calls run <i>inside</i> the persistence boundary and are never re-invoked on
+ * replay.
  */
 interface RoutingExecutor {
 
     /**
-     * Whether this executor issues its own flat durable calls via the {@link RunnerContext} (see
-     * the class contract). Pure executors keep the default.
+     * Whether {@code route()} invokes durable execution internally (its own flat durable calls via
+     * the {@link RunnerContext}) and therefore must run outside the resolver's outer {@code
+     * route:<router>} durable boundary (see the class contract). Pure executors keep the default.
      */
-    default boolean issuesDurableCalls() {
+    default boolean usesDurableExecutionInternally() {
         return false;
     }
 
